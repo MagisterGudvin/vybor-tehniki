@@ -1,0 +1,192 @@
+---
+layout: default
+title: "ВыборТехники — Обзоры техники, гаджетов и технологий"
+description: "Обзоры смартфонов, ноутбуков, гаджетов. Сравнения, подборки и советы по выбору техники."
+---
+
+<div class="page-wrap">
+
+    <!-- FEED -->
+    <main>
+        <div class="feed-filters">
+            <div class="dropdown" id="dd-period">
+                <button class="filter-btn">
+                    <span>Все</span>
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6l4 4 4-4"/></svg>
+                </button>
+                <div class="dropdown-menu">
+                    <button class="dropdown-item" data-days="7">За неделю</button>
+                    <button class="dropdown-item" data-days="30">За месяц</button>
+                    <button class="dropdown-item" data-days="90">За 3 месяца</button>
+                    <button class="dropdown-item active" data-days="9999">Все</button>
+                </div>
+            </div>
+            <div class="dropdown" id="dd-sort">
+                <button class="filter-btn">
+                    <span>Сначала новые</span>
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6l4 4 4-4"/></svg>
+                </button>
+                <div class="dropdown-menu">
+                    <button class="dropdown-item active" data-dir="desc">Сначала новые</button>
+                    <button class="dropdown-item" data-dir="asc">Сначала старые</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="feed" id="feed">
+            {% for post in site.posts %}
+            <a class="feed-item" href="{{ post.url | relative_url }}" data-categories="{{ post.categories | join: ' ' }}" data-date="{{ post.date | date: '%Y-%m-%d' }}">
+                {% assign pcat = post.categories | first %}
+                {% if post.image %}
+                <img class="feed-thumb" src="{{ post.image | relative_url }}" alt="{{ post.title }}" loading="lazy">
+                {% else %}
+                <div class="feed-thumb-placeholder" data-cat="{{ pcat }}">{% include cat_icon.html cat=pcat %}</div>
+                {% endif %}
+                <div class="feed-body">
+                    <div class="feed-meta">
+                        {% if post.categories.size > 0 %}
+                        <span class="feed-cat">{{ post.categories | first }}</span>
+                        <span class="feed-sep">/</span>
+                        {% endif %}
+                        <span>{{ post.date | date: "%d %B, %Y" }}</span>
+                    </div>
+                    <h2>{{ post.title }}</h2>
+                    <p>{{ post.description | default: post.excerpt | strip_html | truncate: 160 }}</p>
+                    <div class="feed-footer">
+                        <span>{{ post.content | number_of_words | divided_by: 200 | plus: 1 }} мин чтения</span>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </main>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <!-- Trending -->
+        <div class="sidebar-block">
+            <div class="sidebar-title">В тренде</div>
+            {% assign trending = site.posts | where_exp: "p", "p.tags contains 'тренд'" %}
+            {% for post in trending limit:5 %}
+            <a class="trend-item" href="{{ post.url | relative_url }}">
+                <div class="trend-body">
+                    <h3>{{ post.title }}</h3>
+                    <p>{{ post.description | default: post.excerpt | strip_html | truncate: 80 }}</p>
+                    <div class="trend-meta">{{ post.date | date: "%d.%m.%Y" }}</div>
+                </div>
+                {% assign tcat = post.categories | first %}
+                {% if post.image %}
+                <img class="trend-thumb" src="{{ post.image | relative_url }}" alt="{{ post.title }}" loading="lazy">
+                {% else %}
+                <div class="trend-thumb-placeholder" data-cat="{{ tcat }}">{% include cat_icon.html cat=tcat %}</div>
+                {% endif %}
+            </a>
+            {% endfor %}
+        </div>
+
+        <!-- Yandex Services -->
+        {% include yandex_services.html %}
+
+    </aside>
+</div>
+
+<script>
+/* ── Dropdown toggle ── */
+document.querySelectorAll('.dropdown').forEach(dd => {
+    const btn = dd.querySelector('.filter-btn');
+    const menu = dd.querySelector('.dropdown-menu');
+    btn.addEventListener('click', e => {
+        e.stopPropagation();
+        document.querySelectorAll('.dropdown-menu.open').forEach(m => { if (m !== menu) m.classList.remove('open'); });
+        menu.classList.toggle('open');
+    });
+});
+document.addEventListener('click', () => {
+    document.querySelectorAll('.dropdown-menu.open').forEach(m => m.classList.remove('open'));
+});
+
+/* ── State ── */
+let currentDays = 9999;
+let currentDir = 'desc';
+let currentCat = 'all';
+
+/* Read ?cat= from URL */
+const urlCat = new URLSearchParams(window.location.search).get('cat');
+if (urlCat) currentCat = urlCat;
+
+function applyFilters() {
+    const feed = document.getElementById('feed');
+    const items = [...feed.querySelectorAll('.feed-item')];
+    const now = new Date();
+    const cutoff = new Date(now.getTime() - currentDays * 86400000);
+
+    items.forEach(item => {
+        const d = new Date(item.dataset.date);
+        const cats = item.dataset.categories || '';
+        const matchCat = currentCat === 'all' || cats.includes(currentCat);
+        const matchDate = currentDays >= 9999 || d >= cutoff;
+        item.style.display = matchCat && matchDate ? '' : 'none';
+    });
+
+    items.sort((a, b) => {
+        const cmp = a.dataset.date.localeCompare(b.dataset.date);
+        return currentDir === 'desc' ? -cmp : cmp;
+    });
+    items.forEach(i => feed.appendChild(i));
+
+    /* Sync nav highlight */
+    document.querySelectorAll('.nav-tag').forEach(t => {
+        t.classList.toggle('active', t.dataset.cat === currentCat);
+    });
+}
+
+/* ── Period dropdown ── */
+document.querySelectorAll('#dd-period .dropdown-item').forEach(item => {
+    item.addEventListener('click', () => {
+        currentDays = parseInt(item.dataset.days);
+        const label = document.querySelector('#dd-period .filter-btn span');
+        label.textContent = item.textContent;
+        document.querySelectorAll('#dd-period .dropdown-item').forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+        item.closest('.dropdown-menu').classList.remove('open');
+        applyFilters();
+    });
+});
+
+/* ── Sort dropdown ── */
+document.querySelectorAll('#dd-sort .dropdown-item').forEach(item => {
+    item.addEventListener('click', () => {
+        currentDir = item.dataset.dir;
+        const label = document.querySelector('#dd-sort .filter-btn span');
+        label.textContent = item.textContent;
+        document.querySelectorAll('#dd-sort .dropdown-item').forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+        item.closest('.dropdown-menu').classList.remove('open');
+        applyFilters();
+    });
+});
+
+/* ── Category filter from nav ── */
+document.querySelectorAll('.nav-tag').forEach(tag => {
+    tag.addEventListener('click', e => {
+        e.preventDefault();
+        currentCat = tag.dataset.cat;
+        const url = new URL(window.location);
+        if (currentCat === 'all') url.searchParams.delete('cat');
+        else url.searchParams.set('cat', currentCat);
+        history.replaceState(null, '', url);
+        applyFilters();
+    });
+});
+
+function highlightNavTag() {
+    document.querySelectorAll('.nav-tag').forEach(t => {
+        t.classList.toggle('active', t.dataset.cat === currentCat);
+    });
+}
+
+/* Apply on load */
+highlightNavTag();
+applyFilters();
+</script>

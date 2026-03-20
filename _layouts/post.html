@@ -1,0 +1,74 @@
+---
+layout: default
+---
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "{{ page.title }}",
+    "description": "{{ page.description }}",
+    "datePublished": "{{ page.date | date_to_xmlschema }}",
+    "dateModified": "{{ page.date | date_to_xmlschema }}",
+    "author": {"@type": "Person", "name": "Редакция ВыборТехники"},
+    "publisher": {"@type": "Organization", "name": "ВыборТехники"},
+    "mainEntityOfPage": {"@type": "WebPage", "@id": "{{ page.url | absolute_url }}"}
+}
+</script>
+
+<div class="page-wrap page-wrap--post">
+
+    <main>
+        <div class="post-hero">
+            {% if page.categories.size > 0 %}
+            <a class="card-tag" href="{{ '/' | relative_url }}?cat={{ page.categories | first }}">{{ page.categories | first }}</a>
+            {% endif %}
+            <h1>{{ page.title }}</h1>
+            <div class="meta">{{ page.date | date: "%d.%m.%Y" }} · {{ content | number_of_words | divided_by: 200 | plus: 1 }} мин чтения</div>
+        </div>
+
+        <article class="post-content">
+            {{ content }}
+
+            {% if page.ref_links %}
+            <div class="ref-products">
+                <h4>🛒 Товары из статьи</h4>
+                {% for link in page.ref_links %}
+                <div class="ref-product">
+                    <span>{{ link.name }}</span>
+                    <a class="btn-ya" href="{{ link.url }}" target="_blank" rel="noopener sponsored nofollow">Купить →</a>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </article>
+    </main>
+
+    <aside class="sidebar">
+        <!-- Trending -->
+        <div class="sidebar-block">
+            <div class="sidebar-title">В тренде</div>
+            {% assign trending = site.posts | where_exp: "p", "p.tags contains 'тренд'" %}
+            {% for post in trending limit:5 %}
+            {% if post.url != page.url %}
+            <a class="trend-item" href="{{ post.url | relative_url }}">
+                <div class="trend-body">
+                    <h3>{{ post.title }}</h3>
+                    <p>{{ post.description | default: post.excerpt | strip_html | truncate: 80 }}</p>
+                    <div class="trend-meta">{{ post.date | date: "%d.%m.%Y" }}</div>
+                </div>
+                {% assign tcat = post.categories | first %}
+                {% if post.image %}
+                <img class="trend-thumb" src="{{ post.image | relative_url }}" alt="{{ post.title }}" loading="lazy">
+                {% else %}
+                <div class="trend-thumb-placeholder" data-cat="{{ tcat }}">{% include cat_icon.html cat=tcat %}</div>
+                {% endif %}
+            </a>
+            {% endif %}
+            {% endfor %}
+        </div>
+
+        {% include yandex_services.html %}
+    </aside>
+
+</div>

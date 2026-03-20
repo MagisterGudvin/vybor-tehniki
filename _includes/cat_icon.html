@@ -1,0 +1,4 @@
+{% comment %}
+  Usage: {% include cat_icon.html cat="смартфоны" %}
+  Returns the emoji for a given category.
+{% endcomment %}{% if include.cat == "смартфоны" %}📱{% elsif include.cat == "ноутбуки" %}💻{% elsif include.cat == "аксессуары" %}🎧{% elsif include.cat == "умный дом" %}🏠{% elsif include.cat == "советы" %}⚡{% elsif include.cat == "новости" %}📰{% elsif include.cat == "приложения" %}📲{% else %}📝{% endif %}

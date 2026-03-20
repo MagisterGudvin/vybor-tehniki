@@ -1,0 +1,105 @@
+# ============================================
+# НАСТРОЙКА (один раз):
+#
+# 1. GitHub → Settings → Developer settings → OAuth Apps → New
+#    https://github.com/settings/developers
+#
+#    Application name:  ВыборТехники CMS
+#    Homepage URL:      https://magistergudvin.github.io/vybor-tehniki/
+#    Callback URL:      https://magistergudvin.github.io/vybor-tehniki/admin/
+#
+# 2. Скопируйте Client ID → вставьте в app_id ниже
+# 3. Client secret НЕ нужен (PKCE работает без него)
+# ============================================
+
+backend:
+  name: github
+  repo: magistergudvin/vybor-tehniki
+  branch: main
+  auth_type: pkce
+  app_id: # ← ВСТАВЬТЕ СЮДА Client ID (например: Iv23li4muVA...)
+  base_url: https://github.com
+
+site_url: https://magistergudvin.github.io/vybor-tehniki
+display_url: https://magistergudvin.github.io/vybor-tehniki
+
+media_folder: "assets/img"
+public_folder: "/vybor-tehniki/assets/img"
+
+locale: "ru"
+
+slug:
+  encoding: "ascii"
+  clean_accents: true
+
+collections:
+  - name: "posts"
+    label: "Статьи"
+    folder: "_posts"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    sortable_fields: ["date", "title"]
+    view_filters:
+      - label: "Тренд"
+        field: tags
+        pattern: "тренд"
+    fields:
+      - label: "Заголовок"
+        name: "title"
+        widget: "string"
+
+      - label: "Описание (meta description)"
+        name: "description"
+        widget: "string"
+        pattern: ['.{1,155}', "Максимум 155 символов"]
+        hint: "Краткое описание для SEO — до 155 символов"
+
+      - label: "Дата"
+        name: "date"
+        widget: "datetime"
+        format: "YYYY-MM-DD"
+        date_format: "DD.MM.YYYY"
+        time_format: false
+
+      - label: "Категория"
+        name: "categories"
+        widget: "select"
+        options:
+          - { label: "Смартфоны", value: "смартфоны" }
+          - { label: "Ноутбуки", value: "ноутбуки" }
+          - { label: "Аксессуары", value: "аксессуары" }
+          - { label: "Умный дом", value: "умный дом" }
+          - { label: "Советы", value: "советы" }
+          - { label: "Новости", value: "новости" }
+          - { label: "Приложения", value: "приложения" }
+
+      - label: "Теги"
+        name: "tags"
+        widget: "list"
+        allow_add: true
+        default: ["тренд"]
+        hint: "Тег «тренд» = статья в блоке «В тренде»"
+
+      - label: "Обложка"
+        name: "image"
+        widget: "image"
+        required: false
+        hint: "Без картинки — цветная заглушка по категории"
+
+      - label: "Товары (реф-ссылки)"
+        name: "ref_links"
+        widget: "list"
+        required: false
+        collapsed: true
+        fields:
+          - { label: "Название", name: "name", widget: "string" }
+          - { label: "Ссылка", name: "url", widget: "string" }
+
+      - label: "Показать сервисы Яндекса"
+        name: "show_yandex_services"
+        widget: "boolean"
+        default: true
+
+      - label: "Текст статьи"
+        name: "body"
+        widget: "markdown"

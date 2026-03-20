@@ -1,0 +1,49 @@
+title: "ВыборТехники"
+description: "Обзоры смартфонов, ноутбуков, гаджетов. Сравнения, подборки и советы по выбору техники."
+url: "https://magistergudvin.github.io"
+baseurl: "/vybor-tehniki"
+lang: ru
+
+permalink: /:slug/
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+      show_yandex_services: true
+
+# Yandex referral config — replace with your real clid/ref codes
+yandex:
+  clid: "YOUR_CLID"
+  browser_ref: "https://clck.ru/YOUR_BROWSER_REF"
+  market_ref: "https://clck.ru/YOUR_MARKET_REF"
+  plus_ref: "https://clck.ru/YOUR_PLUS_REF"
+  disk_ref: "https://clck.ru/YOUR_DISK_REF"
+  station_ref: "https://clck.ru/YOUR_STATION_REF"
+
+# SEO
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+  - jekyll-feed
+
+twitter:
+  card: summary_large_image
+social:
+  name: ВыборТехники
+
+# google_analytics: "YOUR_GA_ID"
+yandex_verification: "YOUR_YANDEX_WEBMASTER_CODE"
+
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
+
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - n8n-workflow.json

@@ -1,0 +1,31 @@
+{% comment %}
+  Usage in markdown:
+  {% include cta.html service="browser" title="Яндекс Браузер" text="Быстрый браузер с ИИ и блокировкой рекламы." icon="🌐" %}
+  {% include cta.html service="market" title="Яндекс Маркет" text="Сравните цены и купите выгодно." icon="🛒" %}
+{% endcomment %}
+
+{% if include.service == "browser" %}
+  {% assign ref_url = site.yandex.browser_ref %}
+  {% assign btn_text = "Скачать бесплатно →" %}
+{% elsif include.service == "market" %}
+  {% assign ref_url = site.yandex.market_ref %}
+  {% assign btn_text = "Перейти на Маркет →" %}
+{% elsif include.service == "plus" %}
+  {% assign ref_url = site.yandex.plus_ref %}
+  {% assign btn_text = "Попробовать Плюс →" %}
+{% elsif include.service == "disk" %}
+  {% assign ref_url = site.yandex.disk_ref %}
+  {% assign btn_text = "Попробовать Диск →" %}
+{% else %}
+  {% assign ref_url = "#" %}
+  {% assign btn_text = "Подробнее →" %}
+{% endif %}
+
+<div class="inline-cta">
+    <div class="inline-cta-icon">{{ include.icon | default: "🔗" }}</div>
+    <div class="inline-cta-body">
+        <h4>{{ include.title }}</h4>
+        <p>{{ include.text }}</p>
+        <a class="btn-ya" href="{{ ref_url }}" target="_blank" rel="noopener sponsored nofollow">{{ btn_text }}</a>
+    </div>
+</div>
