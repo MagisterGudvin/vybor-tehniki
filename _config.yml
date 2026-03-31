@@ -16,7 +16,7 @@ defaults:
 # Yandex referral config — replace with your real clid/ref codes
 yandex:
   clid: "YOUR_CLID"
-  browser_ref: "https://clck.ru/https://redirect.appmetrica.yandex.com/serve/1182700364185533664?partner_id=831050&appmetrica_js_redirect=0&full=0&clid=14875985&banerid=1314875983"
+  browser_ref: "https://redirect.appmetrica.yandex.com/serve/1182700364185533664?partner_id=831050&appmetrica_js_redirect=0&full=0&clid=14875985&banerid=1314875983"
   market_ref: "https://clck.ru/YOUR_MARKET_REF"
   plus_ref: "https://clck.ru/YOUR_PLUS_REF"
   disk_ref: "https://clck.ru/YOUR_DISK_REF"
